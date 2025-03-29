@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: mssql_uploader_demo
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "9199:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=xpt0x14ZBB
+
+  bucket:
+    container_name: gcs_fake_bucket_server
+    image: fsouza/fake-gcs-server:1
+    ports:
+      - "7123:7123"
+    command: [
+      "-scheme", "http",
+      "-port", "7123",
+      "-external-url", "http://localhost:7123",
+      "-public-host", "http://localhost:7123",
+      "-backend", "memory"]

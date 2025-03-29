@@ -1,0 +1,12 @@
+services:
+  bucket:
+    container_name: gcs_fake_bucket_server
+    image: fsouza/fake-gcs-server:1
+    ports:
+      - "7123:7123"
+    command: [
+      "-scheme", "http",
+      "-port", "7123",
+      "-external-url", "http://localhost:7123",
+      "-public-host", "http://localhost:7123",
+      "-backend", "memory"]

@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SafeFileUploader.Api.Test", "..\..\tests\SafeFileUploader.Api.Test\SafeFileUploader.Api.Test.csproj", "{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SafeFileUploaderWeb.Api", "SafeFileUploaderWeb.Api.csproj", "{60D24246-3668-432D-B6CB-9192E3E5A429}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SafeFileUploaderWeb.Core", "..\SafeFileUploaderWeb.Core\SafeFileUploaderWeb.Core.csproj", "{A4AC1305-7611-4096-821E-1B3425D1F61C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Debug|x64.Build.0 = Debug|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Release|x64.Build.0 = Release|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD6DC4EA-0AC0-479D-AFFC-C3B058C162C2}.Release|x86.Build.0 = Release|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Debug|x64.Build.0 = Debug|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Debug|x86.Build.0 = Debug|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Release|x64.ActiveCfg = Release|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Release|x64.Build.0 = Release|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Release|x86.ActiveCfg = Release|Any CPU
+		{60D24246-3668-432D-B6CB-9192E3E5A429}.Release|x86.Build.0 = Release|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Debug|x64.Build.0 = Debug|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Debug|x86.Build.0 = Debug|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Release|x64.Build.0 = Release|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Release|x86.ActiveCfg = Release|Any CPU
+		{A4AC1305-7611-4096-821E-1B3425D1F61C}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

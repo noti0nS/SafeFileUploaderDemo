@@ -1,0 +1,39 @@
+﻿@page "/"
+@using SafeFileUploaderWeb.Core
+@using SafeFileUploaderWeb.Core.Abstractions
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
+    <ActivatorContent>
+        <MudButton 
+        Variant="Variant.Filled" 
+        Color="Color.Primary" 
+        StartIcon="@Icons.Material.Filled.CloudUpload">Upload File</MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+@code {
+    [Inject]
+    private ISnackbar Snackbar { get; set; } = null!;
+
+    private IFileUploaderHandler FileUploader { get; set; } = null!;
+
+    private async Task UploadFiles(IReadOnlyList<IBrowserFile> files)
+    {
+
+        foreach (var file in files)
+        {
+            if (file.Size > Constants.MAX_FILE_SIZE_BYTES)
+            {
+                Snackbar.Add($"The selected file cannot be bigger than {Constants.MAX_FILE_SIZE_MB} MB", Severity.Warning);
+                return;
+            }
+        }
+        // FileUploader.UploadAsync(file);
+    }
+}
