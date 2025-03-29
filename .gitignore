@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 
 # Secret files
 .file-secrets/
+appsettings.production.json
