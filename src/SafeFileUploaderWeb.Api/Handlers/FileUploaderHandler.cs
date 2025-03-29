@@ -1,49 +1,81 @@
 ﻿using System.Net;
+using Google.Cloud.Storage.V1;
 using SafeFileUploaderWeb.Api.Abstractions;
+using SafeFileUploaderWeb.Api.Data;
+using SafeFileUploaderWeb.Core;
 using SafeFileUploaderWeb.Core.Abstractions;
 using SafeFileUploaderWeb.Core.DTOs;
+using SafeFileUploaderWeb.Core.Entities;
 using SafeFileUploaderWeb.Core.Requests;
 using SafeFileUploaderWeb.Core.Responses;
 
 namespace SafeFileUploaderWeb.Api.Handlers;
 
-public class FileUploaderHandler(IStorageService storageService, IConfiguration configuration) : IFileUploaderHandler
+public class FileUploaderHandler(
+    DatabaseContext context,
+    IStorageService storageService,
+    IConfiguration configuration) : IFileUploaderHandler
 {
     public async Task<ApiResponse<List<UrlPreSignedFileDto>>> GetSignedUrlForFilesAsync(
         UploadFilesRequest request, CancellationToken cancellationToken = default)
     {
-        if (HasRepeatedFileNames(request.FileNames))
-        {
-            return ApiResponse<List<UrlPreSignedFileDto>>.Fail("Files with the same names are not allowed.", HttpStatusCode.BadRequest);
-        }
-        var signedUrls = new List<UrlPreSignedFileDto>();
+        string? errorMessage = Validate(request.Files);
+        if (!string.IsNullOrWhiteSpace(errorMessage))
+            return ApiResponse<List<UrlPreSignedFileDto>>.Fail(errorMessage, HttpStatusCode.BadRequest);
         var client = await storageService.GetAuthenticatedClient();
         var signer = client.CreateUrlSigner();
-        foreach (var fileName in request.FileNames)
+        var userFiles = await SaveFilesIntoDb(request, cancellationToken);
+        var signedUrls = new List<UrlPreSignedFileDto>();
+        foreach (var userFile in userFiles)
         {
-            var uniqueFileName 
-                = $"{Guid.NewGuid().ToString().Replace("/", "")}{Path.GetExtension(fileName)}";
+            string uniqueFileName = $"{userFile.Id}.{userFile.Extension}";
             var url = await signer.SignAsync(
                 configuration["Google:Bucket"], 
                 uniqueFileName, 
                 TimeSpan.FromMinutes(configuration.GetValue<int>("Google:PreSignedUrlDurationInMinutes")), 
                 HttpMethod.Put, 
-                cancellationToken: cancellationToken);
-            signedUrls.Add(new UrlPreSignedFileDto(fileName, uniqueFileName, url));
+                SigningVersion.V4, 
+                cancellationToken);
+            signedUrls.Add(new UrlPreSignedFileDto(userFile.GetFileNameWithExtension(), url));
         }
         return ApiResponse<List<UrlPreSignedFileDto>>.Success(signedUrls);
     }
 
-    private static bool HasRepeatedFileNames(List<string> fileNames)
+    private static string? Validate(List<UploadFileItem> files)
     {
         HashSet<string> addedFiles = [];
-        foreach (var fileName in fileNames)
-            if (!addedFiles.Add(fileName)) return true;
-        return false;
+        foreach (var file in files)
+        {
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.Name);
+            string fileExtension = Path.GetExtension(file.Name);
+            if (string.IsNullOrWhiteSpace(fileNameWithoutExtension))
+                return "The file name cannot be empty.";
+            if (fileNameWithoutExtension.Length > Constants.MaxFileNameLength)
+                return $"{fileNameWithoutExtension}: The file name cannot be greater than {Constants.MaxFileNameLength} characters.";
+            if (fileExtension.Length > Constants.MaxExtensionLength)
+                return $"{file.Name}: The file extension cannot be greater than {Constants.MaxExtensionLength} characters.";
+            if (!addedFiles.Add(file.Name)) 
+                return $"{file.Name}: Files with the same name are not allowed.";
+        }
+        return null;
     }
 
-    public Task<ApiResponse<bool>> SaveFilesAsync(List<string> UniqueFileNames)
+    private async Task<List<UserFile>> SaveFilesIntoDb(
+        UploadFilesRequest request, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        List<UserFile> userFiles = [];
+        foreach (var file in request.Files)
+        {
+            var userFile = new UserFile
+            {
+                FileName = Path.GetFileNameWithoutExtension(file.Name),
+                Extension = Path.GetExtension(file.Name),
+                FileSize = file.FileSizeBytes,
+            };
+            await context.AddAsync(userFile, cancellationToken);
+            userFiles.Add(userFile);
+        }
+        await context.SaveChangesAsync(cancellationToken);
+        return userFiles;
     }
 }

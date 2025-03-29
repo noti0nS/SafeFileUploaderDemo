@@ -28,9 +28,9 @@ Welcome to your new app.
 
         foreach (var file in files)
         {
-            if (file.Size > Constants.MAX_FILE_SIZE_BYTES)
+            if (file.Size > Constants.MaxFileSizeBytes)
             {
-                Snackbar.Add($"The selected file cannot be bigger than {Constants.MAX_FILE_SIZE_MB} MB", Severity.Warning);
+                Snackbar.Add($"The selected file cannot be bigger than {Constants.MaxFileSizeMb} MB", Severity.Warning);
                 return;
             }
         }

@@ -1,10 +1,17 @@
+using Microsoft.EntityFrameworkCore;
 using SafeFileUploaderWeb.Api.Abstractions;
+using SafeFileUploaderWeb.Api.Data;
 using SafeFileUploaderWeb.Api.Handlers;
 using SafeFileUploaderWeb.Api.Services;
 using SafeFileUploaderWeb.Core.Abstractions;
 using SafeFileUploaderWeb.Core.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<DatabaseContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddScoped<IFileUploaderHandler, FileUploaderHandler>();

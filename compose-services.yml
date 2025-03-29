@@ -2,6 +2,9 @@ services:
   db:
     container_name: mssql_uploader_demo
     image: mcr.microsoft.com/mssql/server:2022-latest
+    build:
+      context: ./src/
+      dockerfile: ./SafeFileUploaderWeb.Api/Dockerfile
     ports:
       - "9199:1433"
     environment:

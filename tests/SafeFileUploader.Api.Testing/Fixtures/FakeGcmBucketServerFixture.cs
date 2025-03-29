@@ -19,10 +19,10 @@ public class FakeGcmBucketServerFixture : IAsyncLifetime
         await _storageClient.CreateBucketAsync(_projectId, _bucketName);
     }
     
-    public Task DisposeAsync()
+    public async Task DisposeAsync()
     {
+        await _storageClient.DeleteBucketAsync(_bucketName);
         _storageClient.Dispose();
-        return Task.CompletedTask;
     }
 
     public async Task RecreateBucketAsync()
