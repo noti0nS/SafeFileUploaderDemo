@@ -1,0 +1,39 @@
+services:
+  safefileuploaderweb.api:
+    image: ${DOCKER_REGISTRY-}safefileuploaderwebapi
+    depends_on:
+      - safefileuploaderweb.db
+      - safefileuploaderweb.bucket
+    build:
+      context: .
+      dockerfile: SafeFileUploaderWeb.Api/Dockerfile
+
+  safefileuploaderweb.db:
+    container_name: mssql_uploader_demo
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    build:
+      context: .
+      dockerfile: ./SafeFileUploaderWeb.Api/Dockerfile
+    ports:
+      - "9199:1433"
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: xpt0x14ZBB
+    volumes:
+      - ../dev/user_data/mssql/data:/var/opt/mssql/data
+      - ../dev/user_data/mssql/log:/var/opt/mssql/log
+      - ../dev/user_data/mssql/secrets:/var/opt/mssql/secrets
+
+  safefileuploaderweb.bucket:
+    container_name: gcs_fake_bucket_server
+    image: fsouza/fake-gcs-server:1
+    ports:
+      - "7123:7123"
+    command: [
+      "-scheme", "http",
+      "-port", "7123",
+      "-external-url", "http://localhost:7123",
+      "-public-host", "http://localhost:7123",
+      "-backend", "memory"]
+    volumes:
+      - ../dev/user_data/bucket:/data

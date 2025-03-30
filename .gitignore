@@ -483,6 +483,7 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# Secret files
+# App
 .file-secrets/
 appsettings.production.json
+dev/user_data/*

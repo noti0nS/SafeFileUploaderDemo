@@ -2,7 +2,6 @@
 using Google.Cloud.Storage.V1;
 using SafeFileUploaderWeb.Api.Abstractions;
 using SafeFileUploaderWeb.Api.Data;
-using SafeFileUploaderWeb.Core;
 using SafeFileUploaderWeb.Core.Abstractions;
 using SafeFileUploaderWeb.Core.DTOs;
 using SafeFileUploaderWeb.Core.Entities;
@@ -43,27 +42,6 @@ public class FileUploaderHandler(
             signedUrls.Add(new UrlPreSignedFileDto(userFile.GetFileNameWithExtension(), url));
         }
         return ApiResponse<List<UrlPreSignedFileDto>>.Success(signedUrls);
-    }
-
-    private static string? Validate(List<UploadFileItem> files)
-    {
-        HashSet<string> addedFiles = [];
-        foreach (var file in files)
-        {
-            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.Name);
-            var fileExtension = Path.GetExtension(file.Name);
-            if (string.IsNullOrWhiteSpace(fileNameWithoutExtension))
-                return "The file name cannot be empty.";
-            if (fileNameWithoutExtension.Length > Constants.MaxFileNameLength)
-                return $"{fileNameWithoutExtension}: The file name cannot be greater than {Constants.MaxFileNameLength} characters.";
-            if (fileExtension.Length > Constants.MaxExtensionLength)
-                return $"{file.Name}: The file extension cannot be greater than {Constants.MaxExtensionLength} characters.";
-            if (file.FileSizeBytes <= 0)
-                return $"{file.Name}: Invalid file size.";
-            if (!addedFiles.Add(file.Name)) 
-                return $"{file.Name}: Files with the same name are not allowed.";
-        }
-        return null;
     }
 
     private async Task<List<UserFile>> SaveFilesIntoDb(
