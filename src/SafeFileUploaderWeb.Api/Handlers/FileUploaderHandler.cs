@@ -35,7 +35,7 @@ public class FileUploaderHandler(
         {
             var url = await signer.SignAsync(
                 bucket, 
-                $"{userFile.Id}.{userFile.Extension}", 
+                userFile.GetFileBucketName(), 
                 preSignedUrlDuration, 
                 HttpMethod.Put, 
                 SigningVersion.V4, 

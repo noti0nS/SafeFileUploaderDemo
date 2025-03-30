@@ -43,8 +43,7 @@ public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeG
         result.Data.All(f => !string.IsNullOrWhiteSpace(f.Url))
             .Should().BeTrue("all urls should have been returned");
         result.Data
-            .All(f => actualDbData.Find(
-                    uf => string.Equals(f.OriginalFileName, uf.GetFileNameWithExtension())) is not null)
+            .All(f => actualDbData.Exists(uf => string.Equals(f.OriginalFileName, uf.GetFileNameWithExtension())))
             .Should().BeTrue("all requested files should have been created into db");
     }
     

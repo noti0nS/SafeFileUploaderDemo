@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SafeFileUploaderWeb.Api.Abstractions;
 using SafeFileUploaderWeb.Api.Data;
+using SafeFileUploaderWeb.Api.Extensions;
 using SafeFileUploaderWeb.Api.Handlers;
 using SafeFileUploaderWeb.Api.Services;
 using SafeFileUploaderWeb.Core.Abstractions;
@@ -23,7 +24,7 @@ app.MapGet("/", () => new { Message = "OK" });
 app.MapPost("/api/upload", async (UploadFilesRequest request, IFileUploaderHandler handler) =>
 {
     var response = await handler.GetSignedUrlForFilesAsync(request);
-    return response.IsSuccess ? Results.Ok(response) : Results.BadRequest(response);
+    return response.ToHttpResult();
 });
 
 app.Run();
