@@ -1,3 +1,5 @@
+version: "2.34.0"
+
 services:
   db:
     container_name: mssql_uploader_demo
@@ -8,8 +10,8 @@ services:
     ports:
       - "9199:1433"
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=xpt0x14ZBB
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: xpt0x14ZBB
 
   bucket:
     container_name: gcs_fake_bucket_server

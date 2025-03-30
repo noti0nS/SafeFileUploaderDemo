@@ -1,4 +1,6 @@
-services:
+version: "2.34.0"
+
+services:  
   api:
     container_name: safe_file_uploader_api
     build:
@@ -16,8 +18,8 @@ services:
     ports:
       - "9199:1433"
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=xpt0x14ZBB
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: xpt0x14ZBB
 
   bucket:
     container_name: gcs_fake_bucket_server

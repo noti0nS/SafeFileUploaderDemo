@@ -9,8 +9,8 @@ public static class ConfigurationHelper
     static ConfigurationHelper()
     {
         Configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory()) // Ensure the path is correct
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.testing.json", optional: false, reloadOnChange: true)
             .Build();
     }
     

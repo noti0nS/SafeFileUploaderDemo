@@ -19,7 +19,7 @@ public class FileUploaderHandler(
     public async Task<ApiResponse<List<UrlPreSignedFileDto>>> GetSignedUrlForFilesAsync(
         UploadFilesRequest request, CancellationToken cancellationToken = default)
     {
-        string? errorMessage = Validate(request.Files);
+        string? errorMessage = request.Validate();
         if (!string.IsNullOrWhiteSpace(errorMessage))
             return ApiResponse<List<UrlPreSignedFileDto>>.Fail(errorMessage, HttpStatusCode.BadRequest);
         
@@ -50,14 +50,16 @@ public class FileUploaderHandler(
         HashSet<string> addedFiles = [];
         foreach (var file in files)
         {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.Name);
-            string fileExtension = Path.GetExtension(file.Name);
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file.Name);
+            var fileExtension = Path.GetExtension(file.Name);
             if (string.IsNullOrWhiteSpace(fileNameWithoutExtension))
                 return "The file name cannot be empty.";
             if (fileNameWithoutExtension.Length > Constants.MaxFileNameLength)
                 return $"{fileNameWithoutExtension}: The file name cannot be greater than {Constants.MaxFileNameLength} characters.";
             if (fileExtension.Length > Constants.MaxExtensionLength)
                 return $"{file.Name}: The file extension cannot be greater than {Constants.MaxExtensionLength} characters.";
+            if (file.FileSizeBytes <= 0)
+                return $"{file.Name}: Invalid file size.";
             if (!addedFiles.Add(file.Name)) 
                 return $"{file.Name}: Files with the same name are not allowed.";
         }
