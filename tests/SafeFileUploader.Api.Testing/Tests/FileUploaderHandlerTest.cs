@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using SafeFileUploader.Api.Testing.Fixtures;
 using SafeFileUploader.Api.Testing.Helpers;
 using SafeFileUploaderWeb.Api.Handlers;
@@ -13,8 +12,6 @@ namespace SafeFileUploader.Api.Testing.Tests;
 public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeGcmBucketServerFixture storageFixture)
     : IClassFixture<FakeGcmBucketServerFixture>, IClassFixture<MsSqlDbContextFixture>, IAsyncLifetime
 {
-    private readonly IConfiguration _configuration = ConfigurationHelper.GetConfiguration();
-
     Task IAsyncLifetime.InitializeAsync() => Task.CompletedTask;
 
     async Task IAsyncLifetime.DisposeAsync()
@@ -27,7 +24,9 @@ public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeG
     public async Task GetSignedUrlForFilesAsync_InputValidFiles_OutputSignedUrls()
     {
         var handler = new FileUploaderHandler(
-            contextFixture.Context, new StorageService(_configuration), _configuration);
+            contextFixture.Context, 
+            new StorageService(ConfigurationHelper.Configuration), 
+            ConfigurationHelper.Configuration);
         var request = new UploadFilesRequest([
             new UploadFileItem("my_file1.txt", 1_000_000), 
             new UploadFileItem("my_file2.png", 1_000_000), 
@@ -53,7 +52,9 @@ public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeG
     public async Task GetSignedUrlForFilesAsync_RepeatedFileName_ReturnsBadRequest()
     {
         var handler = new FileUploaderHandler(
-            contextFixture.Context, new StorageService(_configuration), _configuration);
+            contextFixture.Context, 
+            new StorageService(ConfigurationHelper.Configuration), 
+            ConfigurationHelper.Configuration);
         var request = new UploadFilesRequest([
             new UploadFileItem("my_file1.txt", 1_000_000), 
             new UploadFileItem("my_file1.txt", 1_000_000), 
@@ -75,7 +76,8 @@ public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeG
     public async Task GetSignedUrlForFilesAsync_InvalidFileName_ReturnsBadRequest(string invalidFileName)
     {
         var handler = new FileUploaderHandler(
-            contextFixture.Context, new StorageService(_configuration), _configuration);
+            contextFixture.Context, new StorageService(
+                ConfigurationHelper.Configuration), ConfigurationHelper.Configuration);
         var request = new UploadFilesRequest([new UploadFileItem(invalidFileName, 100)]);
         
         var result = await handler.GetSignedUrlForFilesAsync(request);

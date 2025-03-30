@@ -4,8 +4,6 @@ services:
     build:
       context: ./src/
       dockerfile: ./SafeFileUploaderWeb.Api/Dockerfile
-      cache_from:
-        - safe_file_uploader_api
     depends_on:
       - db
       - bucket

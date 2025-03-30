@@ -1,32 +1,36 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using SafeFileUploader.Api.Testing.Helpers;
 using SafeFileUploaderWeb.Api.Data;
+using Testcontainers.MsSql;
 
 namespace SafeFileUploader.Api.Testing.Fixtures;
 
 public class MsSqlDbContextFixture : IAsyncLifetime
-{    
-    public DatabaseContext Context { get; private set; }
+{
+    private readonly MsSqlContainer _container;
 
-    public MsSqlDbContextFixture() 
+    public DatabaseContext Context { get; private set; } = null!;
+
+    public MsSqlDbContextFixture()
     {
-        var connString = ConfigurationHelper.GetConfiguration().GetConnectionString("DefaultConnection");
+        _container = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            .Build();
+    }
+
+    public async Task InitializeAsync()
+    {
+        await _container.StartAsync();
         var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>()
-           .EnableSensitiveDataLogging()
-           .EnableDetailedErrors()
-           .UseSqlServer(connString);
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors()
+            .UseSqlServer(_container.GetConnectionString());
         Context = new DatabaseContext(optionsBuilder.Options);
+        await Context.Database.MigrateAsync();
+        await Context.Database.EnsureCreatedAsync();
     }
 
-    public Task InitializeAsync()
-     => Task.CompletedTask;
-
-    public async Task DisposeAsync()
-    {
-        await CleanUpDataAsync();
-        await Context.DisposeAsync();
-    }
+    public Task DisposeAsync()
+        => Task.CompletedTask;
 
     public async Task CleanUpDataAsync()
     {

@@ -14,7 +14,7 @@ public class StorageService(IConfiguration configuration) : IStorageService
         {
             var initializer = new ServiceAccountCredential
                 .Initializer(configuration["Google:ClientEmail"])
-                .FromPrivateKey(configuration["Google:PrivateKey"]);
+                .FromPrivateKey(configuration["Google:PrivateKey"]); 
             var clientBuilder = new StorageClientBuilder
             {
                 UnauthenticatedAccess = false,

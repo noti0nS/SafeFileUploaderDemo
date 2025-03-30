@@ -22,17 +22,21 @@ public class FileUploaderHandler(
         string? errorMessage = Validate(request.Files);
         if (!string.IsNullOrWhiteSpace(errorMessage))
             return ApiResponse<List<UrlPreSignedFileDto>>.Fail(errorMessage, HttpStatusCode.BadRequest);
+        
         var client = await storageService.GetAuthenticatedClient();
         var signer = client.CreateUrlSigner();
         var userFiles = await SaveFilesIntoDb(request, cancellationToken);
+        
+        var bucket = configuration["Google:Bucket"];
+        var preSignedUrlDuration 
+            = TimeSpan.FromMinutes(configuration.GetValue<int>("Google:PreSignedUrlDurationInMinutes"));
         var signedUrls = new List<UrlPreSignedFileDto>();
         foreach (var userFile in userFiles)
         {
-            string uniqueFileName = $"{userFile.Id}.{userFile.Extension}";
             var url = await signer.SignAsync(
-                configuration["Google:Bucket"], 
-                uniqueFileName, 
-                TimeSpan.FromMinutes(configuration.GetValue<int>("Google:PreSignedUrlDurationInMinutes")), 
+                bucket, 
+                $"{userFile.Id}.{userFile.Extension}", 
+                preSignedUrlDuration, 
                 HttpMethod.Put, 
                 SigningVersion.V4, 
                 cancellationToken);
