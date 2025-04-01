@@ -39,10 +39,13 @@ public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeG
         result.IsSuccess.Should().Be(true);
         result.Data.Should().NotBeNull();
         result.Data.Should().HaveCount(request.Files.Count);
-        result.Data.All(f => !string.IsNullOrWhiteSpace(f.Url))
+        result.Data
+            .All(f => !string.IsNullOrWhiteSpace(f.Url))
             .Should().BeTrue("all urls should have been returned");
         result.Data
             .All(f => actualDbData.Exists(uf => string.Equals(f.OriginalFileName, uf.GetFileNameWithExtension())))
             .Should().BeTrue("all requested files should have been created into db");
+        actualDbData.All(uf => string.IsNullOrEmpty(uf.Extension) || uf.Extension.StartsWith('.'))
+            .Should().BeTrue("all saved files must have the Extension property starting with '.' if is not empty.");
     }
 }

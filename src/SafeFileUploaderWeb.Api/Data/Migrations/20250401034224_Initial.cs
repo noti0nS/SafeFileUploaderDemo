@@ -15,11 +15,10 @@ namespace SafeFileUploaderWeb.Api.Data.Migrations
                 name: "UserFiles",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FileSize = table.Column<long>(type: "bigint", nullable: false),
-                    UniqueFileName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    Extension = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    Extension = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false, defaultValue: ""),
                     CreatedAt = table.Column<DateTime>(type: "SMALLDATETIME", nullable: false, defaultValueSql: "GETDATE()")
                 },
                 constraints: table =>

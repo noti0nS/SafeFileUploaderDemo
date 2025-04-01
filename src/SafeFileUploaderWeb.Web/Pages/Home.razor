@@ -1,31 +1,39 @@
 ﻿@page "/"
+@inject ISnackbar Snackbar
+@inject IFileUploaderHandler FileUploader
 @using SafeFileUploaderWeb.Core
 @using SafeFileUploaderWeb.Core.Abstractions
+@using SafeFileUploaderWeb.Core.Requests
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudGrid>
 
-Welcome to your new app.
-
-<MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
-    <ActivatorContent>
-        <MudButton 
-        Variant="Variant.Filled" 
-        Color="Color.Primary" 
-        StartIcon="@Icons.Material.Filled.CloudUpload">Upload File</MudButton>
-    </ActivatorContent>
-</MudFileUpload>
+</MudGrid>
 
 @code {
-    [Inject]
-    private ISnackbar Snackbar { get; set; } = null!;
-
-    private IFileUploaderHandler FileUploader { get; set; } = null!;
-
-    private async Task UploadFiles(IReadOnlyList<IBrowserFile> files)
+    private class LocalFileItem
     {
+        public string Name { get; set; } = string.Empty;
+        public long Size { get; set; }
 
+        private string Extension { get; }
+
+        public LocalFileItem(string name, long size)
+        {
+            Name = name;
+            Size = size;
+            Extension = Path.GetExtension(name);
+        }
+
+        public UploadFileItem ToUploadFile()
+           => new UploadFileItem(Name, Size);
+    }
+
+    private readonly List<IBrowserFile> LoadedFiles = new();
+
+    private async Task LoadFiles(IReadOnlyList<IBrowserFile> files)
+    {
         foreach (var file in files)
         {
             if (file.Size > Constants.MaxFileSizeBytes)
@@ -34,6 +42,5 @@ Welcome to your new app.
                 return;
             }
         }
-        // FileUploader.UploadAsync(file);
     }
 }

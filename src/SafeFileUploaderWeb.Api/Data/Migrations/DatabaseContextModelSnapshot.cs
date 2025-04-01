@@ -24,11 +24,9 @@ namespace SafeFileUploaderWeb.Api.Data.Migrations
 
             modelBuilder.Entity("SafeFileUploaderWeb.Core.Entities.UserFile", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()

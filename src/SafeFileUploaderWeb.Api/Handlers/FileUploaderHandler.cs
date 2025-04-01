@@ -22,32 +22,12 @@ public class FileUploaderHandler(
         if (!string.IsNullOrWhiteSpace(errorMessage))
             return ApiResponse<List<UrlPreSignedFileDto>>.Fail(errorMessage, HttpStatusCode.BadRequest);
         
+        var signedUrls = new List<UrlPreSignedFileDto>();
         var client = await storageService.GetAuthenticatedClient();
         var signer = client.CreateUrlSigner();
-        var userFiles = await SaveFilesIntoDb(request, cancellationToken);
-        
         var bucket = configuration["Google:Bucket"];
-        var preSignedUrlDuration 
+        var preSignedUrlDuration
             = TimeSpan.FromMinutes(configuration.GetValue<int>("Google:PreSignedUrlDurationInMinutes"));
-        var signedUrls = new List<UrlPreSignedFileDto>();
-        foreach (var userFile in userFiles)
-        {
-            var url = await signer.SignAsync(
-                bucket, 
-                userFile.GetFileBucketName(), 
-                preSignedUrlDuration, 
-                HttpMethod.Put, 
-                SigningVersion.V4, 
-                cancellationToken);
-            signedUrls.Add(new UrlPreSignedFileDto(userFile.GetFileNameWithExtension(), url));
-        }
-        return ApiResponse<List<UrlPreSignedFileDto>>.Success(signedUrls);
-    }
-
-    private async Task<List<UserFile>> SaveFilesIntoDb(
-        UploadFilesRequest request, CancellationToken cancellationToken = default)
-    {
-        List<UserFile> userFiles = [];
         foreach (var file in request.Files)
         {
             var userFile = new UserFile
@@ -56,10 +36,17 @@ public class FileUploaderHandler(
                 Extension = Path.GetExtension(file.Name),
                 FileSize = file.FileSizeBytes,
             };
-            await context.AddAsync(userFile, cancellationToken);
-            userFiles.Add(userFile);
+            await context.UserFiles.AddAsync(userFile, cancellationToken);
+            var url = await signer.SignAsync(
+                bucket,
+                userFile.GetFileBucketName(),
+                preSignedUrlDuration,
+                HttpMethod.Put,
+                SigningVersion.V4,
+                cancellationToken);
+            signedUrls.Add(new(file.Name, url));
         }
         await context.SaveChangesAsync(cancellationToken);
-        return userFiles;
+        return ApiResponse<List<UrlPreSignedFileDto>>.Success(signedUrls);
     }
 }

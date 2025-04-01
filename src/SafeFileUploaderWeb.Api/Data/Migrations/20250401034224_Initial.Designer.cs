@@ -12,7 +12,7 @@ using SafeFileUploaderWeb.Api.Data;
 namespace SafeFileUploaderWeb.Api.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250329170051_Initial")]
+    [Migration("20250401034224_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,11 +27,9 @@ namespace SafeFileUploaderWeb.Api.Data.Migrations
 
             modelBuilder.Entity("SafeFileUploaderWeb.Core.Entities.UserFile", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -40,16 +38,18 @@ namespace SafeFileUploaderWeb.Api.Data.Migrations
 
                     b.Property<string>("Extension")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasColumnType("nvarchar(8)")
+                        .HasDefaultValue("");
 
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UniqueFileName")
+                    b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
