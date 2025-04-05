@@ -31,7 +31,7 @@ public class StorageServiceFixture : IAsyncLifetime
         await _fakeGcsServerContainer.StartAsync();
         GoogleOptions.Value.StorageUrl = _fakeGcsServerContainer.GetConnectionString();
         StorageService = new StorageService(GoogleOptions);
-        _storageClient = await new StorageService(GoogleOptions).GetAuthenticatedClient();
+        _storageClient = await StorageService.GetAuthenticatedClient();
         await _storageClient.CreateBucketAsync(
             GoogleOptions.Value.ProjectId, GoogleOptions.Value.Bucket);
     }
