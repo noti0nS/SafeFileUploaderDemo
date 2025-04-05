@@ -1,20 +1,25 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace SafeFileUploader.Api.Testing.Helpers;
 
 public static class ConfigurationHelper
 {
-    public static IConfiguration Configuration { get; }
+    private static readonly IConfiguration _configuration;
 
     static ConfigurationHelper()
     {
-        Configuration = new ConfigurationBuilder()
+        _configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.testing.json", optional: false, reloadOnChange: true)
             .Build();
     }
-    
-    public static void SetStorageUrl(string storageUrl)
-      => Configuration["Google:StorageUrl"] = storageUrl;
 
+    public static IOptions<T> GetOptions<T>(string section)
+        where T : class, new()
+    {
+        var options = new T();
+        _configuration.GetSection(section).Bind(options);
+        return Options.Create(options);
+    }
 }

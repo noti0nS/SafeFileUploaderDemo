@@ -1,0 +1,25 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../.dockerignore" />
+    <File Path="../.gitignore" />
+    <File Path="../compose.yml" />
+    <File Path="../global.json" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="SafeFileUploaderWeb.Api/SafeFileUploaderWeb.Api.csproj" />
+    <Project Path="SafeFileUploaderWeb.Core/SafeFileUploaderWeb.Core.csproj" />
+    <Project Path="SafeFileUploaderWeb.Web/SafeFileUploaderWeb.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="../tests/SafeFileUploader.Api.Testing/SafeFileUploader.Api.Testing.csproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Platform Project="AnyCPU" />
+    <Build />
+  </Project>
+</Solution>

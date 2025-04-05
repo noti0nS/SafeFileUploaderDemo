@@ -1,31 +1,38 @@
 ﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using SafeFileUploader.Api.Testing.Fixtures;
-using SafeFileUploader.Api.Testing.Helpers;
 using SafeFileUploaderWeb.Api.Handlers;
-using SafeFileUploaderWeb.Api.Services;
 using SafeFileUploaderWeb.Core.Requests;
 
 namespace SafeFileUploader.Api.Testing.Tests.IntegrationTesting;
 
-public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeGcmBucketServerFixture storageFixture)
-    : IClassFixture<FakeGcmBucketServerFixture>, IClassFixture<MsSqlDbContextFixture>, IAsyncLifetime
+public class FileUploaderHandlerTest 
+    : IClassFixture<StorageServiceFixture>, IClassFixture<MsSqlDbContextFixture>, IAsyncLifetime
 {
+    private readonly MsSqlDbContextFixture _contextFixture;
+    private readonly StorageServiceFixture _storageFixture;
+    private readonly FileUploaderHandler _handler;
+
+    public FileUploaderHandlerTest(
+        MsSqlDbContextFixture contextFixture, StorageServiceFixture storageFixture)
+    {
+        _contextFixture = contextFixture;
+        _storageFixture = storageFixture;
+        _handler = new FileUploaderHandler(
+            contextFixture.Context, _storageFixture.StorageService, _storageFixture.GoogleOptions);
+    }
+
     Task IAsyncLifetime.InitializeAsync() => Task.CompletedTask;
 
     async Task IAsyncLifetime.DisposeAsync()
     {
-        await contextFixture.CleanUpDataAsync();
-        await storageFixture.RecreateBucketAsync();
+        await _contextFixture.CleanUpDataAsync();
+        await _storageFixture.RecreateBucketAsync();
     }
     
     [Fact]
     public async Task GetSignedUrlForFilesAsync_InputValidFiles_OutputSignedUrls()
     {
-        var handler = new FileUploaderHandler(
-            contextFixture.Context, 
-            new StorageService(ConfigurationHelper.Configuration), 
-            ConfigurationHelper.Configuration);
         var request = new UploadFilesRequest([
             new UploadFileItem("my_file1.txt", 1_000_000), 
             new UploadFileItem("my_file2.png", 1_000_000), 
@@ -33,8 +40,8 @@ public class FileUploaderHandlerTest(MsSqlDbContextFixture contextFixture, FakeG
             new UploadFileItem("my_file4", 1_000_000),
         ]);
         
-        var result = await handler.GetSignedUrlForFilesAsync(request);
-        var actualDbData = await contextFixture.Context.UserFiles.ToListAsync();
+        var result = await _handler.GetSignedUrlForFilesAsync(request);
+        var actualDbData = await _contextFixture.Context.UserFiles.ToListAsync();
         
         result.IsSuccess.Should().Be(true);
         result.Data.Should().NotBeNull();

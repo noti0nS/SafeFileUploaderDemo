@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using Google.Cloud.Storage.V1;
+using Microsoft.Extensions.Options;
 using SafeFileUploaderWeb.Api.Abstractions;
+using SafeFileUploaderWeb.Api.Configuration;
 using SafeFileUploaderWeb.Api.Data;
 using SafeFileUploaderWeb.Core.Abstractions;
 using SafeFileUploaderWeb.Core.DTOs;
@@ -13,7 +15,7 @@ namespace SafeFileUploaderWeb.Api.Handlers;
 public class FileUploaderHandler(
     DatabaseContext context,
     IStorageService storageService,
-    IConfiguration configuration) : IFileUploaderHandler
+    IOptions<GoogleOptionsConfig> googleOptions) : IFileUploaderHandler
 {
     public async Task<ApiResponse<List<UrlPreSignedFileDto>>> GetSignedUrlForFilesAsync(
         UploadFilesRequest request, CancellationToken cancellationToken = default)
@@ -25,9 +27,8 @@ public class FileUploaderHandler(
         var signedUrls = new List<UrlPreSignedFileDto>();
         var client = await storageService.GetAuthenticatedClient();
         var signer = client.CreateUrlSigner();
-        var bucket = configuration["Google:Bucket"];
-        var preSignedUrlDuration
-            = TimeSpan.FromMinutes(configuration.GetValue<int>("Google:PreSignedUrlDurationInMinutes"));
+        var preSignedUrlDuration 
+            = TimeSpan.FromMinutes(googleOptions.Value.PreSignedUrlDurationInMinutes);
         foreach (var file in request.Files)
         {
             var userFile = new UserFile
@@ -38,7 +39,7 @@ public class FileUploaderHandler(
             };
             await context.UserFiles.AddAsync(userFile, cancellationToken);
             var url = await signer.SignAsync(
-                bucket,
+                googleOptions.Value.Bucket,
                 userFile.GetFileBucketName(),
                 preSignedUrlDuration,
                 HttpMethod.Put,
