@@ -13,7 +13,7 @@ public class MsSqlDbContextFixture : IAsyncLifetime
     public MsSqlDbContextFixture()
     {
         _container = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            .WithImage("mcr.microsoft.com/mssql/server@sha256:ea73825f3d88a23c355ac2f9fdc6bd960fec90171c12c572109b36a558f77bb8")
             .Build();
     }
 

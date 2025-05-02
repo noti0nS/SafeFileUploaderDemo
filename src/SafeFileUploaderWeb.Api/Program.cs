@@ -23,6 +23,11 @@ builder.Services.AddScoped<IFileUploaderHandler, FileUploaderHandler>();
 
 var app = builder.Build();
 
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
+
 app.MapGet("/", () => new { Message = "OK" });
 
 app.MapPost("/api/upload", async (UploadFilesRequest request, IFileUploaderHandler handler) =>
