@@ -26,8 +26,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
                 .HasMaxLength(Constants.MaxExtensionLength);
             b.Property(p => p.CreatedAt)
                 .IsRequired()
-                .HasColumnType("SMALLDATETIME")
-                .HasDefaultValueSql("GETDATE()");
+                .HasDefaultValueSql("timezone('utc', now())");
         });
     }
 }

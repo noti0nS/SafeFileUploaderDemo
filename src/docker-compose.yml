@@ -9,20 +9,32 @@ services:
       dockerfile: SafeFileUploaderWeb.Api/Dockerfile
 
   safefileuploaderweb.db:
-    container_name: mssql_uploader_demo
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    build:
-      context: .
-      dockerfile: ./SafeFileUploaderWeb.Api/Dockerfile
+    container_name: postgres_uploader_demo
+    image: postgres@sha256:6cf6142afacfa89fb28b894d6391c7dcbf6523c33178bdc33e782b3b533a9342
     ports:
-      - "9199:1433"
+      - "5432:5432"
     environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: xpt0x14ZBB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: safefileuploader
     volumes:
-      - ../dev/user_data/mssql/data:/var/opt/mssql/data
-      - ../dev/user_data/mssql/log:/var/opt/mssql/log
-      - ../dev/user_data/mssql/secrets:/var/opt/mssql/secrets
+      - ../dev/user_data/postgres/data:/var/lib/postgresql/data
+
+  # safefileuploaderweb.db:
+  #   container_name: mssql_uploader_demo
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   build:
+  #     context: .
+  #     dockerfile: ./SafeFileUploaderWeb.Api/Dockerfile
+  #   ports:
+  #     - "9199:1433"
+  #   environment:
+  #     ACCEPT_EULA: Y
+  #     MSSQL_SA_PASSWORD: xpt0x14ZBB
+  #   volumes:
+  #     - ../dev/user_data/mssql/data:/var/opt/mssql/data
+  #     - ../dev/user_data/mssql/log:/var/opt/mssql/log
+  #     - ../dev/user_data/mssql/secrets:/var/opt/mssql/secrets
 
   safefileuploaderweb.bucket:
     container_name: gcs_fake_bucket_server

@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SafeFileUploaderWeb.Api.Data;
 
 #nullable disable
@@ -12,7 +12,7 @@ using SafeFileUploaderWeb.Api.Data;
 namespace SafeFileUploaderWeb.Api.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250401034224_Initial")]
+    [Migration("20250615205953_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,33 +20,33 @@ namespace SafeFileUploaderWeb.Api.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("SafeFileUploaderWeb.Core.Entities.UserFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("SMALLDATETIME")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
 
                     b.Property<string>("Extension")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)")
+                        .HasColumnType("character varying(8)")
                         .HasDefaultValue("");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("character varying(64)");
 
                     b.Property<long>("FileSize")
                         .HasColumnType("bigint");

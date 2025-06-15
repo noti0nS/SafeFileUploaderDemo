@@ -6,7 +6,7 @@ public class UserFile
     public long FileSize { get; set; }
     public string FileName { get; set; } = string.Empty;
     public string Extension { get; set; } = string.Empty; // it must store the period ('.')
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary>
     /// Returns in the format {Id}.{Extension}

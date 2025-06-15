@@ -1,19 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using SafeFileUploaderWeb.Api.Data;
-using Testcontainers.MsSql;
+using Testcontainers.PostgreSql;
 
 namespace SafeFileUploader.Api.Testing.Fixtures;
 
 public class MsSqlDbContextFixture : IAsyncLifetime
 {
-    private readonly MsSqlContainer _container;
+    private readonly PostgreSqlContainer _container;
 
     public DatabaseContext Context { get; private set; } = null!;
 
     public MsSqlDbContextFixture()
     {
-        _container = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server@sha256:ea73825f3d88a23c355ac2f9fdc6bd960fec90171c12c572109b36a558f77bb8")
+        _container = new PostgreSqlBuilder()
+            .WithImage("postgres@sha256:6cf6142afacfa89fb28b894d6391c7dcbf6523c33178bdc33e782b3b533a9342")
             .Build();
     }
 
@@ -23,7 +23,7 @@ public class MsSqlDbContextFixture : IAsyncLifetime
         var optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>()
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors()
-            .UseSqlServer(_container.GetConnectionString());
+            .UseNpgsql(_container.GetConnectionString());
         Context = new DatabaseContext(optionsBuilder.Options);
         await Context.Database.MigrateAsync();
         await Context.Database.EnsureCreatedAsync();

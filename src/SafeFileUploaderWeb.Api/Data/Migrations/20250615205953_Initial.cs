@@ -15,11 +15,11 @@ namespace SafeFileUploaderWeb.Api.Data.Migrations
                 name: "UserFiles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FileSize = table.Column<long>(type: "bigint", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
-                    Extension = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false, defaultValue: ""),
-                    CreatedAt = table.Column<DateTime>(type: "SMALLDATETIME", nullable: false, defaultValueSql: "GETDATE()")
+                    FileName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    Extension = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false, defaultValue: ""),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())")
                 },
                 constraints: table =>
                 {
