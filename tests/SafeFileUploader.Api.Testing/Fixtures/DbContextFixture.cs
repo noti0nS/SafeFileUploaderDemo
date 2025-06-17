@@ -4,13 +4,13 @@ using Testcontainers.PostgreSql;
 
 namespace SafeFileUploader.Api.Testing.Fixtures;
 
-public class MsSqlDbContextFixture : IAsyncLifetime
+public class DbContextFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container;
 
     public DatabaseContext Context { get; private set; } = null!;
 
-    public MsSqlDbContextFixture()
+    public DbContextFixture()
     {
         _container = new PostgreSqlBuilder()
             .WithImage("postgres@sha256:6cf6142afacfa89fb28b894d6391c7dcbf6523c33178bdc33e782b3b533a9342")

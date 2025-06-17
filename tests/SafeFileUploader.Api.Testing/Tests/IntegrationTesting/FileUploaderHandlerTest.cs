@@ -7,14 +7,14 @@ using SafeFileUploaderWeb.Core.Requests;
 namespace SafeFileUploader.Api.Testing.Tests.IntegrationTesting;
 
 public class FileUploaderHandlerTest 
-    : IClassFixture<StorageServiceFixture>, IClassFixture<MsSqlDbContextFixture>, IAsyncLifetime
+    : IClassFixture<StorageServiceFixture>, IClassFixture<DbContextFixture>, IAsyncLifetime
 {
-    private readonly MsSqlDbContextFixture _contextFixture;
+    private readonly DbContextFixture _contextFixture;
     private readonly StorageServiceFixture _storageFixture;
     private readonly FileUploaderHandler _handler;
 
     public FileUploaderHandlerTest(
-        MsSqlDbContextFixture contextFixture, StorageServiceFixture storageFixture)
+        DbContextFixture contextFixture, StorageServiceFixture storageFixture)
     {
         _contextFixture = contextFixture;
         _storageFixture = storageFixture;
